@@ -1,0 +1,105 @@
+package me.minota.utils
+
+import me.minota.Jin
+import org.bukkit.Bukkit
+import org.bukkit.ChatColor
+import org.bukkit.Material
+import org.bukkit.entity.Player
+import org.bukkit.event.EventHandler
+import org.bukkit.event.HandlerList
+import org.bukkit.event.Listener
+import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.ItemStack
+import org.bukkit.plugin.java.JavaPlugin
+import java.util.function.Consumer
+
+class GUI : Listener {
+    private var name: String
+    private var rows: Int
+    private val items: HashMap<Int, ItemStack>
+    private val runnableHashMap: HashMap<Int, Consumer<InventoryClickEvent>?>
+    private var owner: Player? = null
+    private var slot = 0
+
+    fun rows(newRows: Int): GUI {
+        rows = newRows
+        return this
+    }
+
+    fun name(newName: String?): GUI {
+        name = ChatColor.translateAlternateColorCodes('&', newName)
+        return this
+    }
+
+    fun item(slot: Int, item: ItemStack): GUI {
+        items[slot] = item
+        this.slot = slot
+        return this
+    }
+
+    fun item(slot: Int, item: ItemStack, consumer: Consumer<InventoryClickEvent>?): GUI {
+        items[slot] = item
+        this.slot = slot
+        runnableHashMap[slot] = consumer
+        return this
+    }
+
+    fun owner(owner: Player?): GUI {
+        this.owner = owner
+        return this
+    }
+
+    fun onClick(runnable: Consumer<InventoryClickEvent>?) {
+        runnableHashMap[slot] = runnable
+    }
+
+    @EventHandler
+    fun onInventoryClick(e: InventoryClickEvent) {
+        if (e.whoClicked is Player && owner != null) {
+            val clicker = e.whoClicked as Player
+            if (clicker.uniqueId.toString() == owner!!.uniqueId.toString()) {
+                if (e.currentItem != null) {
+                    if (e.currentItem.type != Material.AIR) {
+                        if (ChatColor.stripColor(e.inventory.name).equals(ChatColor.stripColor(name), ignoreCase = true)) {
+                            val slot = e.slot
+                            if (runnableHashMap[slot] != null) {
+                                runnableHashMap[slot]!!.accept(e)
+                            }
+                        }
+                    }
+                    e.isCancelled = true
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    fun onPlayerClose(event: InventoryCloseEvent) {
+        if (event.player is Player && owner != null) {
+            if (event.player.uniqueId.toString() == owner!!.uniqueId.toString()) {
+                if (ChatColor.stripColor(event.inventory.name).equals(ChatColor.stripColor(name), ignoreCase = true)) {
+                    HandlerList.unregisterAll(this)
+                }
+            }
+        }
+    }
+
+    fun make(): Inventory {
+        require(rows * 9 <= 54) { "Too many rows in the created inventory!" }
+        val inv = Bukkit.createInventory(null, rows * 9, name)
+        for (f in items.keys) {
+            inv.setItem(f, items[f])
+        }
+        return inv
+    }
+
+    init {
+        Bukkit.getPluginManager().registerEvents(this, JavaPlugin.getPlugin(Jin::class.java))
+        name = "Inventory"
+        rows = 1
+        items = HashMap()
+        runnableHashMap = HashMap()
+    }
+}

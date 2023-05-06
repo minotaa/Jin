@@ -1,0 +1,43 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.7.10'
+    id 'com.github.johnrengelman.shadow' version '6.0.0'
+    id 'java'
+}
+
+group = 'me.minota'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    maven { url = 'https://papermc.io/repo/repository/maven-public/' }
+    maven { url = 'https://repo.dmulloy2.net/nexus/repository/public/' }
+    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { url = 'https://repo.lucko.me/' }
+    maven { url = 'https://repo.codemc.io/repository/maven-public/' }
+    maven { url = 'https://maven.citizensnpcs.co/repo' }
+    maven { url = 'https://jitpack.io/' }
+    maven { url = 'https://maven.enginehub.org/repo/' }
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    implementation ('me.lucko:helper:5.6.13')
+    implementation ('me.lucko:helper-profiles:1.2.0')
+    implementation ('org.mongodb:mongodb-driver:3.12.11')
+    implementation ("me.lucko:spark-api:0.1-SNAPSHOT")
+    compileOnly('net.citizensnpcs:citizens-main:2.0.30-SNAPSHOT') {
+        exclude group: '*', module: '*'
+    }
+    implementation ("com.github.NuVotifier.NuVotifier:nuvotifier-bukkit:2.6.0")
+    compileOnly 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
+    compileOnly group: "com.comphenix.protocol", name: "ProtocolLib", version: "4.5.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    compileOnly ("net.dv8tion:JDA:5.0.0-alpha.3") {
+        exclude module: 'opus-java'
+    }
+    implementation 'com.sk89q.worldguard:worldguard-bukkit:7.0.1-SNAPSHOT'
+    compileOnly "com.github.MilkBowl:VaultAPI:1.7"
+    compileOnly "org.bukkit:craftbukkit:1.8.8-R0.1-SNAPSHOT"
+    compileOnly 'com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.9'
+}

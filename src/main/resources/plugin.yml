@@ -1,0 +1,24 @@
+main: me.minota.Jin
+name: Jin
+version: 1.0.0
+author: Minota
+depend:
+  - Vault
+  - WorldGuard
+  - Votifier
+commands:
+  setspawn:
+    description: Sets the spawn point of the server.
+    aliases: /ss
+    usage: /setspawn
+  discord:
+    description: Sends a link to the discord server.
+    aliases: /dc, /d
+    usage: /discord
+  vote:
+    description: Sends a link to the voting page.
+    aliases: /v, /voting
+    usage: /vote
+  kit:
+    description: Opens the kit selector menu.
+    aliases: /kits, /k
